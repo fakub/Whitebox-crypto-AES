@@ -140,7 +140,7 @@ void WBAES::encdec(W128b& state, bool encrypt){
 	op8xor_128(ares[0],  ares[8],  edXTabEx[0][14], ares[0]);  // 0 xor 8 --> 0
 	// Copy result from ares[0] to state
 	W128CP(state, ares[0]);
-
+	
 	// Compute 9 rounds of T2 boxes
 	for(r=0; r<(N_ROUNDS-1); r++){
 		// Perform rest of the operations on 4 tuples.
@@ -270,8 +270,12 @@ void WBAES::encdec(W128b& state, bool encrypt){
 	}
 }
 
-int WBAES::save(char * filename){
-#ifdef WBAES_BOOTS_SERIALIZATION
+#ifndef WBAES_BOOST_SERIALIZATION
+#define WBAES_BOOST_SERIALIZATION 1
+#endif
+
+int WBAES::save(string filename){
+#ifdef WBAES_BOOST_SERIALIZATION
 	std::ofstream ofs(filename);
 	boost::archive::binary_oarchive oa(ofs);
 	oa << this;
@@ -279,13 +283,13 @@ int WBAES::save(char * filename){
 
 	return 0;
 #else
-	cerr << "WBAES::save: Boost is not enabled, use WBAES_BOOTS_SERIALIZATION" << endl;
+	cerr << "WBAES::save: Boost is not enabled, use WBAES_BOOST_SERIALIZATION" << endl;
 	return -1;
 #endif
 }
 
-int WBAES::load(char * filename){
-#ifdef WBAES_BOOTS_SERIALIZATION
+int WBAES::load(string filename){
+#ifdef WBAES_BOOST_SERIALIZATION
 	// open the archive
 	std::ifstream ifs(filename);
 	boost::archive::binary_iarchive ia(ifs);
@@ -296,7 +300,7 @@ int WBAES::load(char * filename){
 	ifs.close();
 	return 0;
 #else
-	cerr << "WBAES::load: Boost is not enabled, use WBAES_BOOTS_SERIALIZATION" << endl;
+	cerr << "WBAES::load: Boost is not enabled, use WBAES_BOOST_SERIALIZATION" << endl;
 	return -1;
 #endif
 }

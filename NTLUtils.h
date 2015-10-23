@@ -31,9 +31,9 @@
 NTL_CLIENT
 
 
-#define CHEX8(x) "0x" << setw(8) << setfill('0') << hex << ((unsigned long int)x)
-#define CHEX(x) "0x" << setw(2) << setfill('0') << hex << ((unsigned long int)x)
-#define GF2EHEX(x) "0x" << setw(2) << setfill('0') << hex << (getLong(x))
+#define CHEX8(x) setw(8) << setfill('0') << hex << ((unsigned long int)x)
+#define CHEX(x) setw(2) << setfill('0') << hex << ((unsigned long int)x)
+#define GF2EHEX(x) setw(2) << setfill('0') << hex << (getLong(x))
 
 /**
  * Init GF2 polynomial from long.

@@ -13,11 +13,12 @@
 #include "NTLUtils.h"
 #include <iomanip>
 
-
+#define WBAES_BOOST_SERIALIZATION 1
 // BOOST serialization
-#ifdef WBAES_BOOTS_SERIALIZATION
+#ifdef WBAES_BOOST_SERIALIZATION
 #include <cstddef> // NULL
 #include <iostream>
+#include <cstdio>
 #include <fstream>
 #include <string>
 #include <boost/archive/tmpdir.hpp>
@@ -89,6 +90,8 @@ typedef union _W128B{
     BYTE B[16];
     unsigned int l[4];
 } W128b;
+// let boost serialize also _W128B (eXTabEx and eTab1 MUST be saved as well)
+BOOST_CLASS_IMPLEMENTATION(_W128B,boost::serialization::object_serializable);
 
 // XOR table is 8b->4b mapping. Thus simple array of size 2^8=256 with type BYTE.
 // 4bit type would be enough, but smallest possible is char, thus 8.
@@ -244,21 +247,25 @@ public:
 	WBAES();
 	virtual ~WBAES();
 
-#ifdef WBAES_BOOTS_SERIALIZATION
+#ifdef WBAES_BOOST_SERIALIZATION
 	friend class boost::serialization::access;
 	template<class Archive>
-	void serialize(Archive & ar, const unsigned int /* file_version */){
+	void serialize(Archive & ar, const unsigned int version){
 		ar & eXTab;
+		ar & eXTabEx;
+		ar & eTab1;
 		ar & eTab2;
 		ar & eTab3;
 		ar & dXTab;
+		ar & dXTabEx;
+		ar & dTab1;
 		ar & dTab2;
 		ar & dTab3;
 	}
 #endif
 	
-	int save(char * filename);
-	int load(char * filename);
+	int save(string filename);
+	int load(string filename);
 
 	// How shift rows affects state array - indexes.
 	// Selector to state array in the beggining of encryption round
@@ -348,7 +355,7 @@ public:
     bool dumpEachRound;
 };
 
-#ifdef WBAES_BOOTS_SERIALIZATION
+#ifdef WBAES_BOOST_SERIALIZATION
 // serialization functions
 namespace boost{ namespace serialization {
 template<class Archive> inline void serialize(Archive &ar, union _W32B &i, const unsigned version){
