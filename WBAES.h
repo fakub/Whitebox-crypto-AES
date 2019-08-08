@@ -34,7 +34,7 @@
 #endif
 
 // 4bit operations support on 8bit storage
-#define HI(x)   (((x) >> 4) & 0xF)                      // HI(xxxxyyyy) = 0000xxxx 
+#define HI(x)   (((x) >> 4) & 0xF)                      // HI(xxxxyyyy) = 0000xxxx
 #define LO(x)   ((x) & 0xF)                             // LO(xxxxyyyy) = 0000yyyy
 #define HILO(h,l)   ((((h) & 0xF) << 4) | (l & 0xF))    // HILO(qqqqwwww, rrrrtttt) = wwwwtttt
 
@@ -52,7 +52,7 @@
             (((e) & 0xF) << 4*3) | \
             (((f) & 0xF) << 4*2) | \
             (((g) & 0xF) << 4*1) | \
-            (  h  & 0xF)     ) 
+            (  h  & 0xF)     )
 
 // constructs 32bit unsigned long from 4x bytes.
 #define HILO4(a,b,c,d) ( \
@@ -74,9 +74,9 @@
 // EXTENDED DATA TYPES
 //
 typedef unsigned char BYTE;
-typedef unsigned long DWORD;       
+typedef unsigned long DWORD;
 typedef BYTE          BITS4;                // FORM OF BITS4 is 0000xxxx, ONLY LOWER 4 BITS ARE USED
-typedef BYTE    MCSTRIP[4];                 // partitional strip obtained by multiplication with MC            
+typedef BYTE    MCSTRIP[4];                 // partitional strip obtained by multiplication with MC
 
 // unary function over GF256 (1D lookup table)
 typedef BYTE GF256_func_t[256];
@@ -102,7 +102,7 @@ typedef BITS4 XTB[256];
 // Input is 1 byte, output is 128bit wide
 typedef W128b AES_TB_TYPE1[256];
 
-// TYPE 2 tables (T, Ty, MB boxes) 
+// TYPE 2 tables (T, Ty, MB boxes)
 // DEF: MB * Tyi * T * L2 ^{-1} (x)
 // Input is 1 byte (2x BITS4), output is 32bit wide (after MC)
 typedef W32b AES_TB_TYPE2[256];
@@ -111,14 +111,14 @@ typedef W32b AES_TB_TYPE2[256];
 // DEF: L * MB ^{-1} (x)
 // Input is 1 byte (2x BITS4), output is 32bit wide
 typedef W32b AES_TB_TYPE3[256];
- 
+
 // 8 XOR tables for XORing 32x32bit input to obtain 32bit output
 typedef XTB    W32XTB[8];
 
-// 32bit wide XOR, o1,o2 are of type W32b, xtb is of type W32XTB. 
+// 32bit wide XOR, o1,o2 are of type W32b, xtb is of type W32XTB.
 // Returns unsigned long int value directly.
 #define OP8XORlong_EX(o1,of1,o2,of2,xtb,of3) (                             \
-		(    HILO(xtb[(of3)+0][OP2HI(o1[(of1)+0], o2[(of2)+0])] ,          \
+        (    HILO(xtb[(of3)+0][OP2HI(o1[(of1)+0], o2[(of2)+0])] ,          \
                   xtb[(of3)+1][OP2LO(o1[(of1)+0], o2[(of2)+0])] ))         \
           | (HILO(xtb[(of3)+2][OP2HI(o1[(of1)+1], o2[(of2)+1])] ,          \
                   xtb[(of3)+3][OP2LO(o1[(of1)+1], o2[(of2)+1])] ) <<  8)   \
@@ -131,10 +131,10 @@ typedef XTB    W32XTB[8];
 
 // Copies W32b data from destination (d) to source (s)
 #define W32CP_EX(d,doff,s,soff) {    \
-	d.B[(doff)+0] = s.B[(soff)+0];   \
-	d.B[(doff)+1] = s.B[(soff)+1];   \
-	d.B[(doff)+2] = s.B[(soff)+2];   \
-	d.B[(doff)+3] = s.B[(soff)+3];   }
+    d.B[(doff)+0] = s.B[(soff)+0];   \
+    d.B[(doff)+1] = s.B[(soff)+1];   \
+    d.B[(doff)+2] = s.B[(soff)+2];   \
+    d.B[(doff)+3] = s.B[(soff)+3];   }
 
 // Copies W32b data from destination (d) to source (s)
 #define W32CP(d,s) W32CP_EX(d,0,s,0)
@@ -146,9 +146,9 @@ typedef XTB    W32XTB[8];
     W32CP_EX(d,8,s,8);               \
     W32CP_EX(d,12,s,12);             }
 
-// 
+//
 // Simple 32bit wide XOR operation.
-// O1, O2 are W32b operands. 
+// O1, O2 are W32b operands.
 // Result = O1 XOR O2
 //
 #define OP8XOR_EX(o1, of1, o2, of2, xtb, of3, res, of4) {                         \
@@ -170,10 +170,10 @@ typedef XTB    W32XTB[8];
 // Result = O1 XOR O2
 //
 #define OP8XOR_128(o1, o2, xtb, res) {                                           \
-	OP8XOR_EX(o1, 0,  o2, 0,  xtb[0], 0, res, 0);                                \
-	OP8XOR_EX(o1, 4,  o2, 4,  xtb[1], 0, res, 4);                                \
-	OP8XOR_EX(o1, 8,  o2, 8,  xtb[2], 0, res, 8);                                \
-	OP8XOR_EX(o1, 12, o2, 12, xtb[3], 0, res, 12);                               }
+    OP8XOR_EX(o1, 0,  o2, 0,  xtb[0], 0, res, 0);                                \
+    OP8XOR_EX(o1, 4,  o2, 4,  xtb[1], 0, res, 4);                                \
+    OP8XOR_EX(o1, 8,  o2, 8,  xtb[2], 0, res, 8);                                \
+    OP8XOR_EX(o1, 12, o2, 12, xtb[3], 0, res, 12);                               }
 
 // Switches indexing of state array from by-row to by-col and vice versa
 //
@@ -187,23 +187,23 @@ inline int idxTranspose(int i) { return IDX_TRANSPOSE(i); }
 
 /**
  * Simple 32bit wide XOR operation.
- * O1, O2 are W32b operands. 
+ * O1, O2 are W32b operands.
  * Result = O1 XOR O2
- * 
+ *
  * Typesafe wrapper for macro OP8XOR.
  */
 inline void op8xor(const W32b& o1, const W32b& o2, const W32XTB& xtb, W32b& res){
 #ifdef WBAESGEN_IDENTITY_4x4
-	// Simple XOR table test - only if IO 4x4 encoding is disabled
-	W32b tmpRes, a1, a2;
-	a1.l = o1.l;
-	a2.l = o2.l;
-	tmpRes.l = o1.l ^ o2.l;
+    // Simple XOR table test - only if IO 4x4 encoding is disabled
+    W32b tmpRes, a1, a2;
+    a1.l = o1.l;
+    a2.l = o2.l;
+    tmpRes.l = o1.l ^ o2.l;
 #endif
     OP8XOR(o1, o2, xtb, res);
 #ifdef WBAESGEN_IDENTITY_4x4
     if (res.l != tmpRes.l){
-    	cout << "XOR warning!!! expected: " << CHEX(tmpRes.l) << " but got: " << CHEX(res.l) << " = " << CHEX(a1.l) << " ^ " << CHEX(a2.l) << endl;
+        cout << "XOR warning!!! expected: " << CHEX(tmpRes.l) << " but got: " << CHEX(res.l) << " = " << CHEX(a1.l) << " ^ " << CHEX(a2.l) << endl;
     }
 #endif
 }
@@ -221,19 +221,19 @@ inline void op8xor_128(const W128b& o1, const W128b& o2, const W32XTB * xtb, W12
 }
 
 inline void dumpW128b(W128b& a){
-	int i;
-	for(i=0; i<16; i++){
-		std::cout << CHEX((int)a.B[i]) << " ";
-		if ((i+1)%4 == 0) std::cout << std::endl;
-	}
+    int i;
+    for(i=0; i<16; i++){
+        std::cout << CHEX((int)a.B[i]);
+    }
+    std::cout << std::endl;
 }
 
 inline void dumpW32b(W32b& a){
-	int i;
-	for(i=0; i<4; i++){
-		std::cout << CHEX((int)a.B[i]) << " ";
-	}
-	std::cout << std::endl;
+    int i;
+    for(i=0; i<4; i++){
+        std::cout << CHEX((int)a.B[i]) << " ";
+    }
+    std::cout << std::endl;
 }
 
 // Reads character vector to W128b, by columns - required format for encryption input
@@ -244,65 +244,65 @@ bool compare_W128b(const W128b& src, const W128b& dst);
 
 class WBAES {
 public:
-	WBAES();
-	virtual ~WBAES();
+    WBAES();
+    virtual ~WBAES();
 
 #ifdef WBAES_BOOST_SERIALIZATION
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version){
-		ar & eXTab;
-		ar & eXTabEx;
-		ar & eTab1;
-		ar & eTab2;
-		ar & eTab3;
-		ar & dXTab;
-		ar & dXTabEx;
-		ar & dTab1;
-		ar & dTab2;
-		ar & dTab3;
-	}
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version){
+        ar & eXTab;
+        ar & eXTabEx;
+        ar & eTab1;
+        ar & eTab2;
+        ar & eTab3;
+        ar & dXTab;
+        ar & dXTabEx;
+        ar & dTab1;
+        ar & dTab2;
+        ar & dTab3;
+    }
 #endif
-	
-	int save(string filename);
-	int load(string filename);
 
-	// How shift rows affects state array - indexes.
-	// Selector to state array in the beggining of encryption round
-	// 
-	// Effect of shiftRows operation:
-	//
-	// | 00 04 08 12 |                          | 00 04 08 12 |
-	// | 01 05 09 13 | ---   Shift Rows   --->  | 05 09 13 01 |
-	// | 02 06 10 14 |  (cyclic left shift)     | 10 14 02 06 |
-	// | 03 07 11 15 |                          | 15 03 07 11 |
-	//
-	const static int shiftRows[N_BYTES];
+    int save(string filename);
+    int load(string filename);
+
+    // How shift rows affects state array - indexes.
+    // Selector to state array in the beggining of encryption round
+    //
+    // Effect of shiftRows operation:
+    //
+    // | 00 04 08 12 |                          | 00 04 08 12 |
+    // | 01 05 09 13 | ---   Shift Rows   --->  | 05 09 13 01 |
+    // | 02 06 10 14 |  (cyclic left shift)     | 10 14 02 06 |
+    // | 03 07 11 15 |                          | 15 03 07 11 |
+    //
+    const static int shiftRows[N_BYTES];
 
     // Inverse ShiftRows()
     // | 00 04 08 12 |                          | 00 04 08 12 |
-	// | 01 05 09 13 | --- Shift Rows Inv --->  | 13 01 05 09 |
-	// | 02 06 10 14 |  (cyclic left right)     | 10 14 02 06 |
-	// | 03 07 11 15 |                          | 07 11 15 03 |
-	//
-	const static int shiftRowsInv[N_BYTES];
+    // | 01 05 09 13 | --- Shift Rows Inv --->  | 13 01 05 09 |
+    // | 02 06 10 14 |  (cyclic left right)     | 10 14 02 06 |
+    // | 03 07 11 15 |                          | 07 11 15 03 |
+    //
+    const static int shiftRowsInv[N_BYTES];
 
-		
-	// XOR tables
+
+    // XOR tables
     W32XTB eXTab[N_ROUNDS][N_SECTIONS][N_XOR_GROUPS];
 
     // XOR tables for external encodings (input & output, connected to Type I tables)
     W32XTB eXTabEx[2][15][4];		// 2 (input, output) * 15 (8,4,2,1) * 4 (32bit * 4 = 128bit)
-	
-	// Type I - just first round
-	AES_TB_TYPE1 eTab1[2][N_BYTES];
-	
-	// Type II tables
+
+    // Type I - just first round
+    AES_TB_TYPE1 eTab1[2][N_BYTES];
+
+    // Type II tables
     AES_TB_TYPE2 eTab2[N_ROUNDS][N_BYTES];
-    
+
     // Type III tables
     AES_TB_TYPE3 eTab3[N_ROUNDS][N_BYTES];
-    
+
     // universal encryption/decryption method
     void encdec(W128b& state, bool encrypt);
 
@@ -321,8 +321,8 @@ public:
     // XOR tables for external encodings (input & output, connected to Type I tables)
     W32XTB dXTabEx[2][15][4];		// 2 (input, output) * 15 (8,4,2,1) * 4 (32bit * 4 = 128bit)
 
-	// Type I - just first round
-	AES_TB_TYPE1 dTab1[2][N_BYTES];
+    // Type I - just first round
+    AES_TB_TYPE1 dTab1[2][N_BYTES];
 
     // Type II tables
     AES_TB_TYPE2 dTab2[N_ROUNDS][N_BYTES];
@@ -331,25 +331,25 @@ public:
     AES_TB_TYPE3 dTab3[N_ROUNDS][N_BYTES];
 
 #ifdef AES_BGE_ATTACK
-    	// In case of BGE attack on WBAES we have to add 8x8 bit bijection on the end of the round
-    	// but in default implementation there are XOR tables on the end of the round. So result from
-    	// round is extracted by XOR tables.
-    	//
-    	// XOR tables have each 4bit output, thus 1 byte is encoded with 2 concatenated 4x4 random bijections.
-    	// We are not able to encode 8x8 bijection on the output of the round with 2 concatenated 4x4 bijections
-    	// because there is less combinations possible and in some situations there would be conflicts like:
-    	//
-    	// 1. round:
-    	//  xtb1[a]=0x06; xtb2[ff]=0x02; HILO=0x62; trans(hilo)=0x56; XTB1-->0x05; ; XTB2-->0x06;   Reversal process; hiloagain: 56; inv: 0x62
-    	//  xtb1[b]=0x04; xtb2[ff]=0x02; HILO=0x42; trans(hilo)=0x5f; XTB1-->0x05; ; XTB2-->0x0f;   Reversal process; hiloagain: 5f; inv: 0x42
-    	//   thus after applying transf. xtb1[0x0a] = 5, xtb2[0x0b]=5
-    	//
-    	// 2. round:
-    	//  xtb1[a]=0x06; xtb2[b]=0x06; HILO=0x66; trans(hilo)=0x52; XTB1-->0x05; ; XTB2-->0x02;   Reversal process; hiloagain: 52; inv: 0x66
-    	//  xtb1[b]=0x04; xtb2[b]=0x06; HILO=0x46; trans(hilo)=0x0a; XTB1-->0x00; ; XTB2-->0x0a;   Reversal process; hiloagain: a; inv: 0x46
-    	//   thus after applying transf. xtb1[0x0b] = 0 (conflict), xtb2[0x0b]=6
-    	GF256_func_t eOutputBijection[N_ROUNDS][N_BYTES];
-    	GF256_func_t dOutputBijection[N_ROUNDS][N_BYTES];
+        // In case of BGE attack on WBAES we have to add 8x8 bit bijection on the end of the round
+        // but in default implementation there are XOR tables on the end of the round. So result from
+        // round is extracted by XOR tables.
+        //
+        // XOR tables have each 4bit output, thus 1 byte is encoded with 2 concatenated 4x4 random bijections.
+        // We are not able to encode 8x8 bijection on the output of the round with 2 concatenated 4x4 bijections
+        // because there is less combinations possible and in some situations there would be conflicts like:
+        //
+        // 1. round:
+        //  xtb1[a]=0x06; xtb2[ff]=0x02; HILO=0x62; trans(hilo)=0x56; XTB1-->0x05; ; XTB2-->0x06;   Reversal process; hiloagain: 56; inv: 0x62
+        //  xtb1[b]=0x04; xtb2[ff]=0x02; HILO=0x42; trans(hilo)=0x5f; XTB1-->0x05; ; XTB2-->0x0f;   Reversal process; hiloagain: 5f; inv: 0x42
+        //   thus after applying transf. xtb1[0x0a] = 5, xtb2[0x0b]=5
+        //
+        // 2. round:
+        //  xtb1[a]=0x06; xtb2[b]=0x06; HILO=0x66; trans(hilo)=0x52; XTB1-->0x05; ; XTB2-->0x02;   Reversal process; hiloagain: 52; inv: 0x66
+        //  xtb1[b]=0x04; xtb2[b]=0x06; HILO=0x46; trans(hilo)=0x0a; XTB1-->0x00; ; XTB2-->0x0a;   Reversal process; hiloagain: a; inv: 0x46
+        //   thus after applying transf. xtb1[0x0b] = 0 (conflict), xtb2[0x0b]=6
+        GF256_func_t eOutputBijection[N_ROUNDS][N_BYTES];
+        GF256_func_t dOutputBijection[N_ROUNDS][N_BYTES];
 #endif
 
     bool dumpEachRound;
